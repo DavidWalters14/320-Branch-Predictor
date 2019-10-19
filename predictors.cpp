@@ -208,7 +208,218 @@ vector<int> biModelSingle(vector<unsigned long long> a, vector<string> b){
 	ret.push_back(sum2048);
 	ret.push_back(a.size());
 	return ret;
-}
+};
+
+vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
+	vector<int> ret;
+	vector<int> sixteenbit;
+	sixteenbit.resize(16);
+	vector<int> thirtytwobit;
+	thirtytwobit.resize(32);
+	vector<int> onetwoeightbit;
+	onetwoeightbit.resize(128);
+	vector<int> twofivesixbit;
+	twofivesixbit.resize(256);
+	vector<int> fivetwelvebit;
+	fivetwelvebit.resize(512);
+	vector<int> ten24bit;
+	ten24bit.resize(1024);
+	vector<int> twenty48bit;
+	twenty48bit.resize(2048);
+	for(int i = 0 ; i < 2048 ; i++){
+		if(i < sixteenbit.size()){
+			sixteenbit[i]=3;
+		}
+		if(i < thirtytwobit.size()){
+			thirtytwobit[i]=3;
+		}
+		if(i < onetwoeightbit.size()){
+			onetwoeightbit[i]=3;	
+		}
+		if(i < twofivesixbit.size()){
+			twofivesixbit[i]=3;
+		}
+		if(i < fivetwelvebit.size()){
+			fivetwelvebit[i]=3;
+		}
+		if(i < ten24bit.size()){
+			ten24bit[i]=3;	
+		}
+		if(i < twenty48bit.size()){
+			twenty48bit[i]=3;
+		}
+	}
+	int sum16 = 0;
+	for(int i = 0 ; i < b.size() ; i++){
+		int index = a[i]%16;
+		if(b[i]=="T"&&sixteenbit[index]>=2){
+			if(sixteenbit[index]==2){
+				sixteenbit[index]=3;
+			}
+			sum16++;
+		}
+		else if(b[i]=="T"&&sixteenbit[index]<2){
+			sixteenbit[index]++;
+		}
+		else if(b[i]=="NT"&&sixteenbit[index]>=2){
+			sixteenbit[index]--;
+		}
+		else{
+			if(sixteenbit[index]==1){
+				sixteenbit[index]--;
+			}
+			sum16++;		
+		}
+	}
+	ret.push_back(sum16);
+	ret.push_back(a.size());
+	int sum32 = 0;
+	for(int i = 0 ; i < b.size() ; i++){
+		int index = a[i]%32;
+		if(b[i]=="T"&&thirtytwobit[index]>=2){
+			if(thirtytwobit[index]==2){
+				thirtytwobit[index]=3;
+			}
+			sum32++;
+		}
+		else if(b[i]=="T"&&thirtytwobit[index]<2){
+			thirtytwobit[index]++;
+		}
+		else if(b[i]=="NT"&&thirtytwobit[index]>=2){
+			thirtytwobit[index]--;
+		}
+		else{
+			if(thirtytwobit[index]==1){
+				thirtytwobit[index]--;
+			}
+			sum32++;		
+		}
+	}
+	ret.push_back(sum32);
+	ret.push_back(a.size());
+	int sum128 = 0;
+	for(int i = 0 ; i < b.size() ; i++){
+		int index = a[i]%128;
+		if(b[i]=="T"&&onetwoeightbit[index]>=2){
+			if(onetwoeightbit[index]==2){
+				onetwoeightbit[index]=3;
+			}
+			sum128++;
+		}
+		else if(b[i]=="T"&&onetwoeightbit[index]<2){
+			onetwoeightbit[index]++;
+		}
+		else if(b[i]=="NT"&&onetwoeightbit[index]>=2){
+			onetwoeightbit[index]--;
+		}
+		else{
+			if(onetwoeightbit[index]==1){
+				onetwoeightbit[index]--;
+			}
+			sum128++;		
+		}
+	}
+	ret.push_back(sum128);
+	ret.push_back(a.size());
+	int sum256 = 0;
+	for(int i = 0 ; i < b.size() ; i++){
+		int index = a[i]%256;
+		if(b[i]=="T"&&twofivesixbit[index]>=2){
+			if(twofivesixbit[index]==2){
+				twofivesixbit[index]=3;
+			}
+			sum256++;
+		}
+		else if(b[i]=="T"&&twofivesixbit[index]<2){
+			twofivesixbit[index]++;
+		}
+		else if(b[i]=="NT"&&twofivesixbit[index]>=2){
+			twofivesixbit[index]--;
+		}
+		else{
+			if(twofivesixbit[index]==1){
+				twofivesixbit[index]--;
+			}
+			sum256++;		
+		}
+	}
+	ret.push_back(sum256);
+	ret.push_back(a.size());
+	int sum512 = 0;
+	for(int i = 0 ; i < b.size() ; i++){
+		int index = a[i]%512;
+		if(b[i]=="T"&&fivetwelvebit[index]>=2){
+			if(fivetwelvebit[index]==2){
+				fivetwelvebit[index]=3;
+			}
+			sum512++;
+		}
+		else if(b[i]=="T"&&fivetwelvebit[index]<2){
+			fivetwelvebit[index]++;
+		}
+		else if(b[i]=="NT"&&fivetwelvebit[index]>=2){
+			fivetwelvebit[index]--;
+		}
+		else{
+			if(twofivesixbit[index]==1){
+				fivetwelvebit[index]--;
+			}
+			sum512++;		
+		}
+	}
+	ret.push_back(sum512);
+	ret.push_back(a.size());
+	int sum1024 = 0;
+	for(int i = 0 ; i < b.size() ; i++){
+		int index = a[i]%1024;
+		if(b[i]=="T"&&ten24bit[index]>=2){
+			if(ten24bit[index]==2){
+				ten24bit[index]=3;
+			}
+			sum1024++;
+		}
+		else if(b[i]=="T"&&ten24bit[index]<2){
+			ten24bit[index]++;
+		}
+		else if(b[i]=="NT"&&ten24bit[index]>=2){
+			ten24bit[index]--;
+		}
+		else{
+			if(ten24bit[index]==1){
+				ten24bit[index]--;
+			}
+			sum1024++;		
+		}
+	}
+	ret.push_back(sum1024);
+	ret.push_back(a.size());
+	int sum2048 = 0;
+	for(int i = 0 ; i < b.size() ; i++){
+		int index = a[i]%2048;
+		if(b[i]=="T"&&twenty48bit[index]>=2){
+			if(twenty48bit[index]==2){
+				twenty48bit[index]=3;
+			}
+			sum2048++;
+		}
+		else if(b[i]=="T"&&twenty48bit[index]<2){
+			twenty48bit[index]++;
+		}
+		else if(b[i]=="NT"&&twenty48bit[index]>=2){
+			twenty48bit[index]--;
+		}
+		else{
+			if(twenty48bit[index]==1){
+				twenty48bit[index]--;
+			}
+			sum2048++;		
+		}
+	}
+	ret.push_back(sum2048);
+	ret.push_back(a.size());
+	return ret;
+	
+};
 
 int main(int argc, char** argv){
 	unsigned long long addr;
@@ -242,6 +453,20 @@ int main(int argc, char** argv){
 		}
 		else{
 			cout << retval3[i];
+		}
+		if(i%2==1){
+			cout << "; ";
+		}
+	}
+	cout << endl;
+	vector<int> retval4;
+	retval4 = biModelTwoBit(addresses, behaviors);
+	for(int i= 0 ; i < retval4.size() ; i++){
+		if(i!=retval4.size()-1){
+			cout << retval4[i] << ",";
+		}
+		else{
+			cout << retval4[i];
 		}
 		if(i%2==1){
 			cout << "; ";
