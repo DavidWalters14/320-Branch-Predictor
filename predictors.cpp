@@ -5,6 +5,8 @@
 #include <fstream>
 #include <vector>
 #include <regex>
+#include <math.h>
+#include <bitset>
 
 using namespace std;
 
@@ -20,7 +22,7 @@ vector<int> alwaysTaken(vector<string> b){
 	vector<int> ret;
 	ret.push_back(sum);
 	ret.push_back(total);
-	return ret;	
+	return ret;
 };
 
 vector<int> alwaysNotTaken(vector<string> b){
@@ -35,7 +37,7 @@ vector<int> alwaysNotTaken(vector<string> b){
 	vector<int> ret;
 	ret.push_back(sum);
 	ret.push_back(total);
-	return ret;	
+	return ret;
 };
 
 vector<int> biModelSingle(vector<unsigned long long> a, vector<string> b){
@@ -65,7 +67,7 @@ vector<int> biModelSingle(vector<unsigned long long> a, vector<string> b){
 			thirtytwobit[i]="T";
 		}
 		if(i < onetwoeightbit.size()){
-			onetwoeightbit[i]="T";	
+			onetwoeightbit[i]="T";
 		}
 		if(i < twofivesixbit.size()){
 			twofivesixbit[i]="T";
@@ -74,7 +76,7 @@ vector<int> biModelSingle(vector<unsigned long long> a, vector<string> b){
 			fivetwelvebit[i]="T";
 		}
 		if(i < ten24bit.size()){
-			ten24bit[i]="T";	
+			ten24bit[i]="T";
 		}
 		if(i < twenty48bit.size()){
 			twenty48bit[i]="T";
@@ -234,7 +236,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			thirtytwobit[i]=3;
 		}
 		if(i < onetwoeightbit.size()){
-			onetwoeightbit[i]=3;	
+			onetwoeightbit[i]=3;
 		}
 		if(i < twofivesixbit.size()){
 			twofivesixbit[i]=3;
@@ -243,7 +245,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			fivetwelvebit[i]=3;
 		}
 		if(i < ten24bit.size()){
-			ten24bit[i]=3;	
+			ten24bit[i]=3;
 		}
 		if(i < twenty48bit.size()){
 			twenty48bit[i]=3;
@@ -268,7 +270,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			if(sixteenbit[index]==1){
 				sixteenbit[index]--;
 			}
-			sum16++;		
+			sum16++;
 		}
 	}
 	ret.push_back(sum16);
@@ -292,7 +294,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			if(thirtytwobit[index]==1){
 				thirtytwobit[index]--;
 			}
-			sum32++;		
+			sum32++;
 		}
 	}
 	ret.push_back(sum32);
@@ -316,7 +318,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			if(onetwoeightbit[index]==1){
 				onetwoeightbit[index]--;
 			}
-			sum128++;		
+			sum128++;
 		}
 	}
 	ret.push_back(sum128);
@@ -340,7 +342,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			if(twofivesixbit[index]==1){
 				twofivesixbit[index]--;
 			}
-			sum256++;		
+			sum256++;
 		}
 	}
 	ret.push_back(sum256);
@@ -364,7 +366,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			if(twofivesixbit[index]==1){
 				fivetwelvebit[index]--;
 			}
-			sum512++;		
+			sum512++;
 		}
 	}
 	ret.push_back(sum512);
@@ -388,7 +390,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			if(ten24bit[index]==1){
 				ten24bit[index]--;
 			}
-			sum1024++;		
+			sum1024++;
 		}
 	}
 	ret.push_back(sum1024);
@@ -412,13 +414,147 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			if(twenty48bit[index]==1){
 				twenty48bit[index]--;
 			}
-			sum2048++;		
+			sum2048++;
 		}
 	}
 	ret.push_back(sum2048);
 	ret.push_back(a.size());
 	return ret;
-	
+
+};
+
+int gShare(vector<unsigned long long> a , vector<string> b, int bitsize){
+	unsigned long size = (int) pow(2,bitsize)-1;
+	unsigned int correct = 0;
+	unsigned int gr = 0;
+	vector<int> table;
+	for(int i = 0 ; i < 2048 ; i++){
+		table.push_back(3);
+	}
+	for(int i = 0 ; i < a.size() ; i++){
+		int index = (a[i] ^ (gr & size)) % 2048;
+		if(b[i]=="T"){
+			if(table[index]>=2){
+				if(table[index]==2){
+					table[index]++;
+				}
+				correct++;
+			}
+			else{
+				table[index]++;
+			}
+		}
+		else{
+			if(table[index]<2){
+				if(table[index]==1){
+					table[index]--;
+				}
+				correct++;
+			}
+			else{
+				table[index]--;
+			}
+		}
+		int branchoutcome = 0;
+		if(b[i]=="T"){
+			branchoutcome=1;
+		}
+		gr = gr << 1;
+		gr = gr | branchoutcome;
+	}
+	return correct;
+};
+
+int Tournament(vector<unsigned long long> a , vector<string> b){
+	vector<int> gtable(2048, 3);
+	vector<int> btable(2048, 3);
+	int counter = 0;
+	unsigned long size = (int) pow(2,11)-1;
+	unsigned int correct = 0;
+	unsigned int gr = 0;
+	for(int i = 0 ; i < a.size() ; i++){
+		bool bcorrect = false;
+		int bindex = a[i]%2048;
+		if(b[i]=="T"&&btable[bindex]>=2){
+			if(btable[bindex]==2){
+				btable[bindex]=3;
+			}
+			bcorrect = true;
+		}
+		else if(b[i]=="T"&&btable[bindex]<2){
+			btable[bindex]++;
+		}
+		else if(b[i]=="NT"&&btable[bindex]>=2){
+			btable[bindex]--;
+		}
+		else{
+			if(btable[bindex]==1){
+				btable[bindex]--;
+			}
+			bcorrect=true;
+		}
+		bool gcorrect = false;
+		int gindex = (a[i] ^ (gr & size)) % 2048;
+		if(b[i]=="T"){
+			if(gtable[gindex]>=2){
+				if(gtable[gindex]==2){
+					gtable[gindex]++;
+				}
+				gcorrect=true;
+			}
+			else{
+				gtable[gindex]++;
+			}
+		}
+		else{
+			if(gtable[gindex]<2){
+				if(gtable[gindex]==1){
+					gtable[gindex]--;
+				}
+				gcorrect=true;
+			}
+			else{
+				gtable[gindex]--;
+			}
+		}
+		int branchoutcome = 0;
+		if(b[i]=="T"){
+			branchoutcome=1;
+		}
+		gr = gr << 1;
+		gr = gr | branchoutcome;
+		if(gcorrect==true&&bcorrect==true){
+			correct++;
+		}
+		else if(gcorrect==true&&bcorrect==false){
+			if(counter<=1){
+				if(counter==1){
+					counter--;
+				}
+				correct++;
+			}
+			else{
+				counter--;
+			}
+		}
+		else if(gcorrect==false&&bcorrect==true){
+			if(counter>=2){
+				if(counter==2){
+					counter++;
+				}
+				correct++;
+			}
+			else{
+				counter++;
+			}
+		}
+	}
+	return correct;
+};
+
+vector<int> btb(vector<unsigned long long> a, vector<string> b, vector<unsigned long long> t){
+	vector<int> ret;
+	return ret;
 };
 
 int main(int argc, char** argv){
@@ -448,7 +584,7 @@ int main(int argc, char** argv){
 	vector<int> retval3;
 	retval3 = biModelSingle(addresses, behaviors);
 	for(int i= 0 ; i < retval3.size() ; i++){
-		if(i!=retval3.size()-1){
+		if(i!=retval3.size()-1&&i%2==0){
 			cout << retval3[i] << ",";
 		}
 		else{
@@ -462,7 +598,7 @@ int main(int argc, char** argv){
 	vector<int> retval4;
 	retval4 = biModelTwoBit(addresses, behaviors);
 	for(int i= 0 ; i < retval4.size() ; i++){
-		if(i!=retval4.size()-1){
+		if(i!=retval4.size()-1&&i%2==0){
 			cout << retval4[i] << ",";
 		}
 		else{
@@ -473,5 +609,15 @@ int main(int argc, char** argv){
 		}
 	}
 	cout << endl;
+	vector<int> retval5;
+	for(int i = 3 ; i < 12 ; i++){
+		retval5.push_back(gShare(addresses, behaviors , i));
+	}
+	for(int i = 0 ; i < retval5.size() ; i++){
+		cout << retval5[i] << "," << addresses.size() << ";";
+	}
+	cout << endl;
+	int retval6 = Tournament(addresses, behaviors);
+	cout << retval6 << "," << addresses.size() << ";" << endl;
 	infile.close();
 }
