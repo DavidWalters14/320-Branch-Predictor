@@ -363,7 +363,7 @@ vector<int> biModelTwoBit(vector<unsigned long long> a , vector<string> b){
 			fivetwelvebit[index]--;
 		}
 		else{
-			if(twofivesixbit[index]==1){
+			if(fivetwelvebit[index]==1){
 				fivetwelvebit[index]--;
 			}
 			sum512++;
