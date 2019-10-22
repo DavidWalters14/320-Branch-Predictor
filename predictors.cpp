@@ -606,9 +606,16 @@ int Tournament(vector<unsigned long long> a , vector<string> b){
 };
 
 vector<int> btb(vector<unsigned long long> a, vector<string> b, vector<unsigned long long> t){
+	vector<int> btable (512,3);
+	unsigned int branches = 0;
+	unsigned int hits = 0;
 	vector<int> ret;
-
-
+	vector<unsigned long long> targets(128,0);
+	for(int i = 0 ; i < b.size() ; i++){
+			
+	}
+	ret.push_back(hits);
+	ret.push_back(branches);
 	return ret;
 };
 
@@ -674,5 +681,7 @@ int main(int argc, char** argv){
 	cout << endl;
 	int retval6 = Tournament(addresses, behaviors);
 	cout << retval6 << "," << addresses.size() << ";" << endl;
+	vector<int> retval7 = btb(addresses,behaviors,targets);
+	cout << retval7[0] <<"," << retval7[1] <<";" << endl;
 	infile.close();
 }
