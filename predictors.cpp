@@ -7,6 +7,7 @@
 #include <regex>
 #include <math.h>
 #include <bitset>
+#include <utility>
 
 using namespace std;
 
@@ -606,82 +607,113 @@ int Tournament(vector<unsigned long long> a , vector<string> b){
 };
 
 vector<int> btb(vector<unsigned long long> a, vector<string> b, vector<unsigned long long> t){
-	vector<int> btable (512,3);
+	vector<int> btable (512,1);
 	unsigned int branches = 0;
 	unsigned int hits = 0;
 	vector<int> ret;
-	vector<unsigned long long> targets(128,0);
-	for(int i = 0 ; i < b.size() ; i++){
-			
+	vector<pair<unsigned long long, unsigned long long>> targets;
+	for(int i = 0 ; i < 128 ; i++){
+		targets.push_back(pair <unsigned long long, unsigned long long> (0,0));
 	}
-	ret.push_back(hits);
+	for(int i = 0 ; i < a.size() ; i++){
+		int targetindex = a[i]%128;
+		int index512bit = a[i]%512;
+		if(btable[index512bit]==1){
+			branches++;
+			if(targets[targetindex].first==a[i]){
+				if(targets[targetindex].second==t[i]){
+					hits++;
+				}
+			}
+			else{
+				targets[targetindex]=pair <unsigned long long, unsigned long long> (a[i],t[i]);
+			}
+		}
+		string behave = "NT";
+		if(btable[index512bit]==1){
+			behave="T";
+		}
+		if(behave!=b[i]){
+			if(b[i]=="T"){
+				btable[index512bit]=1;
+			}
+			else{
+				btable[index512bit]=0;
+			}
+		}
+		
+	}
 	ret.push_back(branches);
+	ret.push_back(hits);
 	return ret;
 };
 
-int main(int argc, char** argv){
+int main(int argc, char *argv[]){
 	unsigned long long addr;
 	string behavior;
 	unsigned long long target;
 	vector<unsigned long long> addresses;
 	vector<string> behaviors;
 	vector<unsigned long long> targets;
-
+	ofstream output;
+	output.open(argv[2]);
   	// Open file for reading
-  	ifstream infile("short_trace1.txt");
-
+  	ifstream infile(argv[1]);
+	//infile.open()
   	// The following loop will read a hexadecimal number and
   	// a string each time and then output them
   	while(infile >> std::hex >> addr >> behavior >> std::hex >> target) {
+		//cout << addr << endl;
     		addresses.push_back(addr);
 		behaviors.push_back(behavior);
 		targets.push_back(target);
   	}
 	vector<int> retval;
 	retval = alwaysTaken(behaviors);
-	cout << retval[0] << " , " << retval[1] << endl;
+	output << retval[0] << "," << retval[1] << endl;
 	vector<int> retval2;
 	retval2 = alwaysNotTaken(behaviors);
-	cout << retval2[0] << " , " << retval2[1] << endl;
+	output << retval2[0] << "," << retval2[1] << endl;
 	vector<int> retval3;
 	retval3 = biModelSingle(addresses, behaviors);
 	for(int i= 0 ; i < retval3.size() ; i++){
 		if(i!=retval3.size()-1&&i%2==0){
-			cout << retval3[i] << ",";
+			output << retval3[i] << ",";
 		}
 		else{
-			cout << retval3[i];
+			output << retval3[i];
 		}
 		if(i%2==1){
-			cout << "; ";
+			output << "; ";
 		}
 	}
-	cout << endl;
+	output << endl;
 	vector<int> retval4;
 	retval4 = biModelTwoBit(addresses, behaviors);
 	for(int i= 0 ; i < retval4.size() ; i++){
 		if(i!=retval4.size()-1&&i%2==0){
-			cout << retval4[i] << ",";
+			output << retval4[i] << ",";
 		}
 		else{
-			cout << retval4[i];
+			output << retval4[i];
 		}
 		if(i%2==1){
-			cout << "; ";
+			output << "; ";
 		}
 	}
-	cout << endl;
+	output << endl;
 	vector<int> retval5;
 	for(int i = 3 ; i < 12 ; i++){
 		retval5.push_back(gShare(addresses, behaviors , i));
 	}
 	for(int i = 0 ; i < retval5.size() ; i++){
-		cout << retval5[i] << "," << addresses.size() << ";";
+		output << retval5[i] << "," << addresses.size() << ";";
 	}
-	cout << endl;
+	output<< endl;
 	int retval6 = Tournament(addresses, behaviors);
-	cout << retval6 << "," << addresses.size() << ";" << endl;
+	output << retval6 << "," << addresses.size() << ";" << endl;
 	vector<int> retval7 = btb(addresses,behaviors,targets);
-	cout << retval7[0] <<"," << retval7[1] <<";" << endl;
+	output << retval7[0] <<"," << retval7[1] <<";" << endl;
 	infile.close();
+	output.close();
 }
