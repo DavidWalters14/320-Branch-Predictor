@@ -468,7 +468,7 @@ int gShare(vector<unsigned long long> a , vector<string> b, int bitsize){
 int Tournament(vector<unsigned long long> a , vector<string> b){
 	vector<int> gtable(2048, 3);
 	vector<int> btable(2048, 3);
-	int counter = 0;
+	vector<int> stable(2048, 0);
 	unsigned long size = (int) pow(2,11)-1;
 	unsigned int correct = 0;
 	unsigned int gr = 0;
@@ -477,7 +477,7 @@ int Tournament(vector<unsigned long long> a , vector<string> b){
 		int bindex = a[i]%2048;
 		if(b[i]=="T"&&btable[bindex]>=2){
 			if(btable[bindex]==2){
-				btable[bindex]=3;
+				btable[bindex]++;
 			}
 			bcorrect = true;
 		}
@@ -523,7 +523,56 @@ int Tournament(vector<unsigned long long> a , vector<string> b){
 		}
 		gr = gr << 1;
 		gr = gr | branchoutcome;
-		if(gcorrect==true&&bcorrect==true){
+		int state = stable[bindex];
+		if(bcorrect==gcorrect){
+			if(bcorrect==true){
+				//cout << " both correct " ;
+				correct++;
+			}
+		}
+		else{
+					//cout << "state prior: " << state;
+
+			if(state>=2){
+				//choose bimodel
+				if(bcorrect==true){
+				//	cout << " bimodel chosen and correct ";
+					//bimodel right
+					if(state==2){
+						state++;
+					}
+					correct++;
+				}
+				else{
+					//cout << " bimodel wrong ";
+					//bimodel wrong
+					state--;
+				}
+			}
+			else{
+				//cout << "state: " << state;
+				//cout << "state if gshare chosen: " << state;
+				//choose gshare
+				//cout << " gcorrect?: " << gcorrect << endl;
+				if(gcorrect==true){
+					//cout << " gshare correct ";
+					//gshare right
+					if(state==1){
+						state--;
+					}
+					correct++;
+				}
+				else{
+					//cout << " gshare wrong ";
+					//gshare wrong
+					state++;
+				}
+			}
+									//cout << " state after: " << state << endl;
+
+		}
+		stable[bindex]=state;
+		/*if(gcorrect==true&&bcorrect==true){
 			correct++;
 		}
 		else if(gcorrect==true&&bcorrect==false){
@@ -534,10 +583,14 @@ int Tournament(vector<unsigned long long> a , vector<string> b){
 				correct++;
 			}
 			else{
+				cout << "i : " << i << endl;
+				cout << "miss, gcorrect: " << gcorrect << " bcorrect : " << bcorrect << endl;
 				counter--;
+				cout << "counter : " << counter << endl;
 			}
 		}
 		else if(gcorrect==false&&bcorrect==true){
+			cout << "bcorrect > gcorrect" << endl;
 			if(counter>=2){
 				if(counter==2){
 					counter++;
@@ -547,13 +600,15 @@ int Tournament(vector<unsigned long long> a , vector<string> b){
 			else{
 				counter++;
 			}
-		}
+		}*/
 	}
 	return correct;
 };
 
 vector<int> btb(vector<unsigned long long> a, vector<string> b, vector<unsigned long long> t){
 	vector<int> ret;
+
+
 	return ret;
 };
 
